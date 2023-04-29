@@ -1,0 +1,81 @@
+version: '3.4'
+
+networks:
+  net_web:
+    driver: bridge
+
+services:
+  reverse-proxy:
+    image: nginx:latest
+    depends_on:
+      - web-app
+    ports:
+      - '4444:4444'
+    volumes:
+      - ./proxy-conf/:/etc/nginx/conf.d/
+    networks:
+      - net_web
+
+  db_server:
+    image: mysql:latest
+    container_name: mysql_server
+    volumes:
+      - ./master/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+      # - ./master-init.sql:/docker-entrypoint-initdb.d/master-init.sql
+    env_file:
+      - database.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 3306:3306
+    networks:
+      - net_web
+
+  db_slave:
+    image: mysql:latest
+    container_name: mysql_slave
+    # command: ["sh","-c","chmod +x /scripts/init-slave.sh && /scripts/init-slave.sh && mysqld"] # ["sh", "/scripts/init-slave.sh","&&","sh","docker-entrypoint.sh"]
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=slave_db
+      - MYSQL_USER=slave
+      - MYSQL_PASSWORD=root
+    volumes:
+      # - ./init-slave.sh:/scripts/init-slave.sh
+      - ./slave/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+      # - ./slave-init.sql:/docker-entrypoint-initdb.d/slave-init.sql
+    depends_on:
+      - db_server
+    networks:
+      - net_web
+  
+  setup-slave:
+    image: mysql:latest
+    container_name: setup-slave
+    command: ["sh", "/scripts/init-slave.sh"]
+    volumes:
+      - ./init-slave.sh:/scripts/init-slave.sh
+    environment:
+      - MASTER_HOST=mysql_server
+      - SLAVE_HOST=mysql_slave
+    depends_on:
+      - db_server
+      - db_slave
+    networks:
+      - net_web
+  
+  web-app:
+    build: ./groupietracker/
+    container_name: web_app
+    depends_on:
+      - db_server
+      - db_slave
+    ports:
+      - '8080:8080'
+    env_file:
+      - database.env
+    environment:
+      - MYSQL_SERVER_IP=mysql_server
+      - MYSQL_SERVER_PORT=3306
+    networks:
+      - net_web
