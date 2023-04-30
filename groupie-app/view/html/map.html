@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+	integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+	crossorigin=""/>
+	<link rel="preconnect" href="https://fonts.googleapis.com/%22%3E">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="/view/js/script_map.js"></script> 
+    <link rel="stylesheet" href="/view/css/style_map.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+	<title>Concert Locations</title>
+</head>
+<body>
+	<div class="navbar">
+		<div class="logo">
+			<a href="/">
+				<img src="/view/img/GROUPIE.png" />
+			</a>
+		</div>
+		<div class="titlemap">{{ .Name }} : all concerts locations</div>
+	</div>
+	<div class="page">
+		<div class="locationsList">
+			{{ range .Locations }}
+			<h1>latitude : {{ .Lat }}</h1>
+			<h1>longitude : {{ .Lon }}</h1>
+			<script type="text/javascript">AddCity('{{ .Lat }}', '{{ .Lon }}')</script>
+			{{ end }}
+		</div>
+		<div id="mapwrapper">
+			<div id="map"></div>
+		</div>
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+			integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+			crossorigin=""></script>
+			<script type="text/javascript">InitMap()
+		</script>
+	</div>
+</body>
+</html>

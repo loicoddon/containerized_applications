@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/view/css/style_index.css">
+    <link rel="icon" href="/view/img/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com/%22%3E">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="/view/js/script_index.js"></script> 
+    <script type="text/javascript" src="/view/js/script_searchbar.js"></script> 
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <title>Groupie Tracker</title>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="/view/img/GROUPIE.png" />
+            <div class="search">
+                <form autocomplete="off" class="search-box" method="POST" action="/" >
+                    <div class="autocomplete">
+                        <input type="text" class="input-search" id="input-search" name="input-search" placeholder="Type to Search...">
+                        <button type="submit" class="btn-search" ><i class='fas fa-search'></i></button>
+                    </div>
+                    <div class="wrapper-sugglist">
+                        <ul id="sugglist">
+                            {{ range .AllBands }}
+                            <script type="text/javascript">getData('{{ .Name }} (band)')</script>
+                                {{ range .Members }}
+                                    <script type="text/javascript">getData('{{ . }} (artist)')</script>
+                                {{ end }}
+                            {{ end }}
+                        </ul>
+                    </div>
+                    <script>
+                        autocomplete(document.getElementById("input-search"), suggestions);
+                    </script>
+                </form>
+                <div id="result">
+                </div>
+            </div>
+        </div>
+        <div class="filterbox">
+            SEARCH FILTERS
+            <div class="filters">
+                <form method="POST" action="/">
+                    <div>
+                        N°Members:
+                        <input type="checkbox" name="filter_nmembers" id="filter_nb1" value="1">
+                        <label for="filter_nb1">1</label>
+                        <input type="checkbox" name="filter_nmembers" id="filter_nb2" value="2">
+                        <label for="filter_nb2">2</label>
+                        <input type="checkbox" name="filter_nmembers" id="filter_nb3" value="3">
+                        <label for="filter_nb3">3</label>
+                        <input type="checkbox" name="filter_nmembers" id="filter_nb4" value="4">
+                        <label for="filter_nb4">4</label>
+                        <input type="checkbox" name="filter_nmembers" id="filter_nb5" value="5">
+                        <label for="filter_nb5">5</label>
+                        <input type="checkbox" name="filter_nmembers" id="filter_nb6" value="6">
+                        <label for="filter_nb6">6</label>
+                        <input type="checkbox" name="filter_nmembers" id="filter_nb7" value="7">
+                        <label for="filter_nb7">7</label>  
+                    </div>
+                    <div>
+                        Created before:
+                        <input type="range" name="filter_startingyear" value="2022" min="1960" max="2022" oninput="this.form.starting_year_input.value=this.value" />
+                        <input type="number" name="starting_year_input" value="2022" min="1960" max="2022" oninput="this.form.filter_startingyear.value=this.value" />
+                    </div>
+                    <div>
+                        By first album release date:
+                        <label class="switch">
+                            <input type="checkbox" name="filter_firstalbum" value="1">
+                            <span class="slider"></span>
+                          </label>
+                    </div>
+                    <div class="locations">
+                        Concert location:
+                        <select name="filter_location" id="filter_location" onfocus='this.size=5;' onblur='this.size=1;' 
+                        onchange='this.size=1; this.blur();'>
+                            <option value=""></option>
+                            <option value="argentina">Argentina</option>
+                            <option value="australia">Australia</option>
+                            <option value="austria">Austria</option>
+                            <option value="belgium">Belgium</option>
+                            <option value="brazil">Brazil</option>
+                            <option value="canada">Canada</option>
+                            <option value="chile">Chile</option>
+                            <option value="china">China</option>
+                            <option value="costa_rica">Costa Rica</option>
+                            <option value="czechia">Czechia</option>
+                            <option value="denmark">Denmark</option>
+                            <option value="finland">Finland</option>
+                            <option value="france">France</option>
+                            <option value="germany">Germany</option>
+                            <option value="greece">Greece</option>
+                            <option value="hungary">Hungary</option>
+                            <option value="india">India</option>
+                            <option value="indonesia">Indonesia</option>
+                            <option value="ireland">Ireland</option>
+                            <option value="italy">Italy</option>
+                            <option value="mexico">Mexico</option>
+                            <option value="netherlands">Netherlands</option>
+                            <option value="new_zealand">New Zealand</option>
+                            <option value="norway">Norway</option>
+                            <option value="peru">Peru</option>
+                            <option value="philippines">Philippines</option>
+                            <option value="poland">Poland</option>
+                            <option value="portugal">Portugal</option>
+                            <option value="romania">Romania</option>
+                            <option value="saudi_arabia">Saudi Arabia</option>
+                            <option value="spain">Spain</option>
+                            <option value="sweden">Sweden</option>
+                            <option value="switzerland">Switzerland</option>
+                            <option value="united_arab_emirates">United Arab Emirates</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="usa">United States of America</option>                        
+                        </select> 
+                    </div>
+                    <div>
+                        <button type="submit" class="btn">Apply filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="page">
+        {{ range .DisplayBands }}
+        <button class="open-btn" data-content="{{ .Name }}" onclick="openForm('{{ .Id }}')">
+             <img src="{{ .Image }}">
+        </button>
+        <div class="band_info_popup" id="{{ .Id }}">
+            <div class="cross">x</div>
+            <div class="infos">
+                <div class="cover"><img src="{{ .Image }}"></div>
+                <div class="bandname"><h1>{{ .Name }}</h1>
+                    <div class="firsts">
+                        <div>Creation year : {{ .CreationDate }}</div>
+                        <div>First album : {{ .FirstAlbum }}</div>
+                    </div>
+                </div>
+                <div class="members">
+                    <div class="memberstitle"><h2>Members</h2></div>                      
+                    
+                    
+                    <div class="memberslist">
+                        {{ range $v := .Members}}
+                        <div>{{ $v }}</div>
+                        {{ end }}
+                    </div>
+                </div>
+            </div>
+            <div class="datestitle">
+                <h2>Concerts</h2>    
+            </div>
+
+            <div class="dates">
+                {{ range $key, $value := .Relations }}
+                    <h3>{{ $key }}</h3>
+                    {{ range $value }}
+                    <div>{{ . }}</div>
+                    {{ end }}
+                {{ end }}    
+            </div>
+            <form action="/map" method="POST">
+                <button class="place" name="ID" value="{{ .Id }}">Show on map</button>
+            </form> 
+        </div>
+        {{ end }}
+    </div>
+</body>
+</html>

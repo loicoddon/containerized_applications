@@ -65,7 +65,7 @@ services:
       - net_web
   
   web-app:
-    build: ./groupietracker/
+    build: ./groupie-app/
     container_name: web_app
     depends_on:
       - db_server
