@@ -148,3 +148,8 @@ services:
      command: "-config.file=/etc/promtail/promtail-config.yaml"
      networks:
        - net_web
+
+  doom:
+    build: game/game_build_files/doom/.
+    ports:
+      - "81:8000"
