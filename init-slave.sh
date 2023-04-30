@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Wait for the master to be ready
-sleep 4
+sleep 10
 
-mysql -h mysql_server -u root -proot -e "CREATE USER 'slave_user'@'$SLAVE_HOST' IDENTIFIED BY 'slave_password';
-GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'$SLAVE_HOST';
+mysql -h mysql_server -u root -proot -e "CREATE USER 'slave_user'@'%' IDENTIFIED BY 'slave_password';
+GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%';
 FLUSH PRIVILEGES;"
 
 # Retrieve the master log file and position
@@ -14,7 +14,7 @@ MASTER_LOG_POS=$(echo $MASTER_STATUS | awk '{ print $2 }')
 echo "Phase 1 terminé"
 
 # Set up replication on the slave
-mysql -h mysql_slave -u root -proot -e "
+mysql -h mysql_slave -u root -proot -e "CREATE DATABASE groupie_DB;
 CHANGE MASTER TO
   MASTER_HOST='$MASTER_HOST',
   MASTER_USER='slave_user',

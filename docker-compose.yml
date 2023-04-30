@@ -7,6 +7,7 @@ networks:
 services:
   reverse-proxy:
     image: nginx:latest
+    container_name: reverse_proxy
     depends_on:
       - web-app
     ports:
@@ -21,7 +22,6 @@ services:
     container_name: mysql_server
     volumes:
       - ./master/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
-      # - ./master-init.sql:/docker-entrypoint-initdb.d/master-init.sql
     env_file:
       - database.env
     environment:
@@ -34,16 +34,13 @@ services:
   db_slave:
     image: mysql:latest
     container_name: mysql_slave
-    # command: ["sh","-c","chmod +x /scripts/init-slave.sh && /scripts/init-slave.sh && mysqld"] # ["sh", "/scripts/init-slave.sh","&&","sh","docker-entrypoint.sh"]
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=slave_db
       - MYSQL_USER=slave
       - MYSQL_PASSWORD=root
     volumes:
-      # - ./init-slave.sh:/scripts/init-slave.sh
       - ./slave/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
-      # - ./slave-init.sql:/docker-entrypoint-initdb.d/slave-init.sql
     depends_on:
       - db_server
     networks:
@@ -70,6 +67,7 @@ services:
     depends_on:
       - db_server
       - db_slave
+      - setup-slave
     ports:
       - '8080:8080'
     env_file:
