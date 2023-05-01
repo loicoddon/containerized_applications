@@ -12,8 +12,10 @@ services:
   reverse-proxy:
     image: nginx:latest
     container_name: reverse_proxy
+    restart: on-failure
     depends_on:
       - web-app
+      - doom
     ports:
       - '4444:4444'
     volumes:
@@ -151,5 +153,8 @@ services:
 
   doom:
     build: game/game_build_files/doom/.
+    container_name: game_doom
+    networks:
+      - net_web
     ports:
       - "81:8000"
