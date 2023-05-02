@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Wait for the master to be ready
-sleep 10
+sleep 15
 
 mysql -h mysql_server -u root -proot -e "CREATE USER 'slave_user'@'%' IDENTIFIED BY 'slave_password';
 GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%';

@@ -8,6 +8,7 @@ volumes:
   prometheus_data: {}
   grafana_data: {}
   db_data: {}
+  db_data_slave: {}
 
 services:
   reverse-proxy:
@@ -48,6 +49,7 @@ services:
       - MYSQL_USER=slave
       - MYSQL_PASSWORD=root
     volumes:
+      - db_data_slave:/var/lib/mysql
       - ./slave/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
     depends_on:
       - db_server

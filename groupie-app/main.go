@@ -22,8 +22,8 @@ func main() {
 	db_user := os.Getenv("MYSQL_USER")
 	db_password := os.Getenv("MYSQL_PASSWORD")
 	db_Name := os.Getenv("MYSQL_DATABASE")
-	fmt.Println(dbIP,":",dbPort,":",db_user,":",db_password,":",db_Name)
-	time.Sleep(12 * time.Second)
+	
+	time.Sleep(17 * time.Second)
 
     // Create a MySQL database connection string using the host and port
     connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",db_user,db_password, dbIP, dbPort,db_Name)
