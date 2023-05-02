@@ -54,7 +54,7 @@
       <script>
         Dos(document.getElementById("jsdos"), {
         }).ready((fs, main) => {
-          fs.extract("game.zip").then(() => {
+          fs.extract("game/game.zip").then(() => {
             main(["-c", GAME_ARGS])
           });
         });
