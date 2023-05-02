@@ -7,6 +7,7 @@ networks:
 volumes:
   prometheus_data: {}
   grafana_data: {}
+  db_data: {}
 
 services:
   reverse-proxy:
@@ -27,6 +28,7 @@ services:
     image: mysql:latest
     container_name: mysql_server
     volumes:
+      - db_data:/var/lib/mysql
       - ./master/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
     env_file:
       - database.env
@@ -158,3 +160,37 @@ services:
       - net_web
     ports:
       - "81:8000"
+
+  dind:
+    image: docker:dind
+    container_name: dind
+    restart: always
+    privileged: true
+    dns:
+      - 8.8.8.8
+    volumes:
+      - "/var/lib/docker/plugins/:/var/lib/docker/plugins/"
+      - "/run/docker/plugins:/run/docker/plugins"
+      - "./monitoring/daemon.json:/etc/docker/daemon.json"
+      - "/var/lib/docker/containers/:/var/lib/docker/containers"
+    command: "dockerd"
+    networks:
+      - net_web
+
+  wordpress:
+    depends_on:
+      - db_server
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    volumes:
+      - ./wordpress/wp-content:/var/www/html/wp-content
+      - ./wordpress/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db_server:3306
+      WORDPRESS_DB_NAME: groupie_DB
+      WORDPRESS_DB_USER: groupie
+      WORDPRESS_DB_PASSWORD: root
+    networks:
+      - net_web
